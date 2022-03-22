@@ -27,7 +27,7 @@ public class MSLogoutController {
 	@Autowired
 	MicroserviceUtils microserviceUtils;
 
-	@PostMapping(value = "/rest/_logout")
+	@PostMapping(value = "/rest/logout")
 	@ResponseBody
 	public ResponseEntity<Object> logout(@RequestBody RequestInfoWrapper request, HttpServletRequest httpReq) {
 		LOGGER.info("***Logout initiated***");
