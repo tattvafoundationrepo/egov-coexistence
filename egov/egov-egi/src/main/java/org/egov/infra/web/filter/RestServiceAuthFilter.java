@@ -81,6 +81,9 @@ public class RestServiceAuthFilter implements Filter {
 			LOGGER.info("*****Clear Token request recieved****");
 			//httpRequest.getRequestDispatcher(httpRequest.getServletPath()).forward(req, res);
 			chain.doFilter(req, res);
+		} else if (httpRequest.getRequestURI().contains("/_logout")) {
+			LOGGER.info("*****LOGOUT Request forward****");
+			chain.doFilter(req, res);
 		} else if (httpRequest.getRequestURI().contains("/rest/voucher/")) {
 			try {
 				RestRequestWrapper request = new RestRequestWrapper(httpRequest);
