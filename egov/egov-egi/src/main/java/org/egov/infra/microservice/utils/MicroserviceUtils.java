@@ -1285,17 +1285,18 @@ public class MicroserviceUtils {
 
     public void removeSessionFromRedis(String access_token, String sessionId) {
         LOGGER.info("Logout for authtoken : " + access_token + " and session : " + sessionId);
-        String sessionIdFromRedis = (String) redisTemplate.opsForHash().get(access_token, "auth_token");
-        LOGGER.info(redisTemplate.opsForHash().get("auth_token", access_token));
-        LOGGER.info("**Redis sessionID*****"+sessionIdFromRedis);
-        if(sessionIdFromRedis != null)
-        	redisTemplate.delete(sessionIdFromRedis);
         if (null != access_token && redisTemplate.hasKey(access_token)) {
             sessionId = (String) redisTemplate.opsForHash().get(sessionId, sessionId);
+            Object sessionIdFromRedis = redisTemplate.opsForHash().get(access_token, "session_id");
+            LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
+            if(sessionIdFromRedis != null) {
+            	redisTemplate.delete(sessionId);
+            	sessionId = String.valueOf(sessionIdFromRedis);
+            }
             if (sessionId != null) {
             	LOGGER.info("***********sessionId**** " + sessionId);
-                redisTemplate.delete(sessionId);
                 redisTemplate.delete(access_token);
+                redisTemplate.delete(sessionId);
                 LOGGER.info("spring:session:sessions:" + sessionId);
                 LOGGER.info("spring:session:sessions:expires:" + sessionId);
                 redisTemplate.delete("spring:session:sessions:" + sessionId);

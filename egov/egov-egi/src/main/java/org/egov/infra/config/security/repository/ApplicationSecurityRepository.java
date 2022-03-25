@@ -37,6 +37,8 @@ import com.mchange.rmi.NotAuthorizedException;
 public class ApplicationSecurityRepository implements SecurityContextRepository {
 
 	private static final String AUTH_TOKEN = "auth_token";
+	
+	private static final String SESSION_ID = "session_id";
 
 	private static final Logger LOGGER = Logger.getLogger(ApplicationSecurityRepository.class);
 
@@ -126,6 +128,7 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		this.microserviceUtils.removeSessionFromRedis(userToken, session.getId());
 		
 		this.microserviceUtils.savetoRedis(session.getId(), AUTH_TOKEN, userToken);
+		this.microserviceUtils.savetoRedis(userToken, SESSION_ID, session.getId());
 		this.microserviceUtils.savetoRedis(session.getId(), "_details", user);
 		this.microserviceUtils.saveAuthToken(userToken, session.getId());
 
