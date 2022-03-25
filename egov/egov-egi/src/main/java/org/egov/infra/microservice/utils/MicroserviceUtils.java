@@ -1287,7 +1287,7 @@ public class MicroserviceUtils {
         LOGGER.info("Logout for authtoken : " + access_token + " and session : " + sessionId);
         if (null != access_token && redisTemplate.hasKey(access_token)) {
             sessionId = (String) redisTemplate.opsForHash().get(sessionId, sessionId);
-            Object sessionIdFromRedis = redisTemplate.opsForHash().get(access_token, "session_id");
+            Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + access_token, "session_id");
             LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
             if(sessionIdFromRedis != null) {
             	redisTemplate.delete(sessionId);

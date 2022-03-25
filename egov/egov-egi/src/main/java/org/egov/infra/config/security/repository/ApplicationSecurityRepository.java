@@ -5,6 +5,7 @@ import static org.egov.infra.utils.ApplicationConstant.MS_USER_TOKEN;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -128,13 +129,20 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		this.microserviceUtils.removeSessionFromRedis(userToken, session.getId());
 		
 		this.microserviceUtils.savetoRedis(session.getId(), AUTH_TOKEN, userToken);
-		this.microserviceUtils.savetoRedis(userToken, SESSION_ID, session.getId());
+		this.microserviceUtils.savetoRedis("session_token_fetch:" + userToken, SESSION_ID, session.getId());
 		this.microserviceUtils.savetoRedis(session.getId(), "_details", user);
 		this.microserviceUtils.saveAuthToken(userToken, session.getId());
 
 		this.microserviceUtils.setExpire(session.getId());
 		this.microserviceUtils.setExpire(userToken);
-
+		LOGGER.info("******Print all keys from redis");
+		Set<Object> redisKeys = redisTemplate.keys("*");
+		// Store the keys in a List
+		Iterator<Object> it = redisKeys.iterator();
+		while (it.hasNext()) {
+			Object data = it.next();
+			LOGGER.info("Keys in redis: " + data);
+		}
 		return this.parepareCurrentUser(response.getUserSearchResponseContent().get(0));
 	}
 
