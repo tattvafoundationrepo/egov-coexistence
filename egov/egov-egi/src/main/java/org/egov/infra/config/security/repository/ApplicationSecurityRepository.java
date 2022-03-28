@@ -135,6 +135,10 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 
 		this.microserviceUtils.setExpire(session.getId());
 		this.microserviceUtils.setExpire(userToken);
+		
+		Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + userToken, "session_id");
+        LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
+        
 		LOGGER.info("******Print all keys from redis");
 		Set<Object> redisKeys = redisTemplate.keys("*");
 		// Store the keys in a List
