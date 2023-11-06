@@ -126,7 +126,7 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		session.setAttribute(USERID_KEY, user.getId());
 		UserSearchResponse response = this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());
 		LOGGER.info("Before remove session::"+userToken + "::" + session.getId());
-		this.microserviceUtils.removeSessionFromRedis(userToken, session.getId());
+		this.microserviceUtils.removeSessionFromRedis(userToken, session.getId(), false);
 		
 		this.microserviceUtils.savetoRedis(session.getId(), AUTH_TOKEN, userToken);
 		this.microserviceUtils.savetoRedis("session_token_fetch:" + userToken, SESSION_ID, session.getId());
@@ -139,14 +139,12 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + userToken, "session_id");
         LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
         
-		LOGGER.info("******Print all keys from redis");
-		Set<Object> redisKeys = redisTemplate.keys("*");
-		// Store the keys in a List
-		Iterator<Object> it = redisKeys.iterator();
-		while (it.hasNext()) {
-			Object data = it.next();
-			LOGGER.info("Keys in redis: " + data);
-		}
+		/*
+		 * LOGGER.info("******Print all keys from redis"); Set<Object> redisKeys =
+		 * redisTemplate.keys("*"); // Store the keys in a List Iterator<Object> it =
+		 * redisKeys.iterator(); while (it.hasNext()) { Object data = it.next();
+		 * LOGGER.info("Keys in redis: " + data); }
+		 */
 		return this.parepareCurrentUser(response.getUserSearchResponseContent().get(0));
 	}
 

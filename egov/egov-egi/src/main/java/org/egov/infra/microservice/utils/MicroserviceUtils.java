@@ -1284,15 +1284,13 @@ public class MicroserviceUtils {
             return null;
     }
 
-    public void removeSessionFromRedis(String access_token, String sessionId) {
-    	LOGGER.info("******Print all keys from redis on LOGOUT***********");
-		Set<Object> redisKeys = redisTemplate.keys("*");
-		// Store the keys in a List
-		Iterator<Object> it = redisKeys.iterator();
-		while (it.hasNext()) {
-			Object data = it.next();
-			LOGGER.info("****Keys in redis---->>> " + data);
-		}
+    public void removeSessionFromRedis(String access_token, String sessionId, boolean isLogout) {
+		/*
+		 * LOGGER.info("******Print all keys from redis on LOGOUT***********");
+		 * Set<Object> redisKeys = redisTemplate.keys("*"); // Store the keys in a List
+		 * Iterator<Object> it = redisKeys.iterator(); while (it.hasNext()) { Object
+		 * data = it.next(); LOGGER.info("****Keys in redis---->>> " + data); }
+		 */
         LOGGER.info("Logout for authtoken : " + access_token + " and session : " + sessionId);
         Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + access_token, "session_id");
         LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
@@ -1302,8 +1300,11 @@ public class MicroserviceUtils {
             	redisTemplate.delete(sessionId);
             	sessionId = String.valueOf(sessionIdFromRedis);
             	LOGGER.info("***********sessionId**** " + sessionId);
-                redisTemplate.delete(access_token);
-                redisTemplate.delete("auth:"+access_token);
+            	redisTemplate.delete(access_token);
+                if(isLogout) {
+                	LOGGER.info("***********remove auth:token********");
+                	redisTemplate.delete("auth:"+access_token);
+                }
                 redisTemplate.delete(sessionId);
                 LOGGER.info("spring:session:sessions:" + sessionId);
                 LOGGER.info("spring:session:sessions:expires:" + sessionId);

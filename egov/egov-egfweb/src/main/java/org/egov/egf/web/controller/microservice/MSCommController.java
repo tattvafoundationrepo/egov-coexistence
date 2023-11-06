@@ -99,7 +99,7 @@ public class MSCommController {
 				LOGGER.info("********* Retrieved session::authtoken******** {}::{}", sessionId, accessToken);
                 if(redisRepository!=null){
                 	LOGGER.info("*********** Deleting the session for redisrepository {}", sessionId);   
-                    microserviceUtils.removeSessionFromRedis(accessToken, sessionId);
+                    microserviceUtils.removeSessionFromRedis(accessToken, sessionId, true);
                 }
             }
 
