@@ -51,6 +51,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.time.LocalDate;
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -277,5 +281,45 @@ public class WorkOrderService implements EntityTypeService {
 			throws ValidationException {
 		return Collections.emptyList();
 	}
+	
+	public synchronized String generateWorkOrderNumber() {
+        
+        String financialYear = getFinancialYear();
+        
+        Long latestOrderNumber = getLastWorkOrderNumber();
+        
+       if (latestOrderNumber != null) {           
+
+            String orderNumber = "WO/001/" + financialYear + "/" + "0000" +(latestOrderNumber+1); 
+            return orderNumber;
+      
+      }
+      else {
+          return "WO/001/" + financialYear + "/" + "00001";
+      }
+  }
+
+   
+  //added by Navajit
+  private static String getFinancialYear() {
+      LocalDate today = LocalDate.now();
+      int year = today.getYear();
+      int month = today.getMonthValue();
+
+      String financialYear;
+      if (month >= 4) {
+          // Financial year starts from April
+          financialYear = String.format("%02d", year % 100) + "-" + String.format("%02d", (year + 1) % 100);
+      } else {
+          financialYear = String.format("%02d", (year - 1) % 100) + "-" + String.format("%02d", year % 100);
+      }
+      return financialYear;
+  }
+  
+  //added by Navajit
+  public Long getLastWorkOrderNumber() {
+      return workOrderRepository.findMaxId();
+  }
+
 
 }

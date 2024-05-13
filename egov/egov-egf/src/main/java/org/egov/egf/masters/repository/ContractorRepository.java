@@ -66,5 +66,8 @@ public interface ContractorRepository extends JpaRepository<Contractor, Long> {
     
     @Query("from Contractor where status.code='Active'")
     public List<Contractor> findByStatus();
+    
+    @Query(value = "SELECT MAX(id) FROM Contractor")
+    Long findMaxId();
 
 }

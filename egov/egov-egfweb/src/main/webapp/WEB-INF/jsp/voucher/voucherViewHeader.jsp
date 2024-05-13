@@ -189,7 +189,36 @@
 			<td width="10%" class="<c:out value='${tdclass}' />"><s:text name="voucher.ban.number"/> :
 				&nbsp;</td>
 			<td colspan="3" class="<c:out value='${tdclass}' />"><s:property
-					value="%{getMasterName('budgetaryAppnumber')}" /></td>
+					value="%{getMasterName('budgetaryAppnumber')}" />
+					 <script>
+            // JavaScript code to display an alert with the value
+            var valueToAlert = '<s:property value="%{getMasterName('budgetaryAppnumber')}" />';
+            alert("Value: " + valueToAlert);
+            console.log("Value to log: " + valueToAlert); // Log the value to the console
+        </script>
+					</td>
+			<c:choose>
+				<c:when test="${tdclass == 'bluebox'}">
+					<c:set var="tdclass" value="greybox" scope="request" />
+				</c:when>
+				<c:otherwise>
+					<c:set var="tdclass" value="bluebox" scope="request" />
+				</c:otherwise>
+			</c:choose>
+
+		</tr>
+		<tr>
+			<td width="10%" class="<c:out value='${tdclass}' />"><s:text name="voucher.propertyid"/> :
+				&nbsp;</td>
+			<td colspan="3" class="<c:out value='${tdclass}' />"><s:property
+					value="%{getMasterName('propertyid')}" />
+					 <script>
+            // JavaScript code to display an alert with the value
+            var valueToAlert = '<s:property value="%{getMasterName('propertyid')}" />';
+            alert("Value: " + valueToAlert);
+            console.log("Value to log: " + valueToAlert); // Log the value to the console
+        </script>
+					</td>
 			<c:choose>
 				<c:when test="${tdclass == 'bluebox'}">
 					<c:set var="tdclass" value="greybox" scope="request" />

@@ -51,6 +51,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.model.masters.PurchaseItems;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -141,6 +142,9 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     private List<EgBilldetails> creditDetails = new ArrayList<>();
     @Transient
+    private List<EgBilldetails> percentDetails = new ArrayList<>();    // added by nava
+    
+    @Transient
     private List<EgBilldetails> netPayableDetails = new ArrayList<>();
     @Transient
     private List<EgBillPayeedetails> billPayeedetails = new ArrayList<>();
@@ -154,8 +158,46 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     @SafeHtml
     private String approvalComent;
+    @Transient
+    private String purchaseObject;
+    
+    
+	public String getPurchaseObject() {
+		return purchaseObject;
+	}
 
-    public EgBillregister() {
+	public void setPurchaseObject(String purchaseObject) {
+		this.purchaseObject = purchaseObject;
+	}
+
+	@Transient
+    private List<PurchaseItems> purchaseItems;
+    
+    
+   
+
+	@OneToMany(mappedBy = "egBillregister", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, targetEntity = EgBillPurchaseItemsDetails.class)
+    private List<EgBillPurchaseItemsDetails> egBillPurchaseItemsDetails;
+    
+    
+
+	public List<PurchaseItems> getPurchaseItems() {
+		return purchaseItems;
+	}
+
+	public void setPurchaseItems(List<PurchaseItems> purchaseItems) {
+		this.purchaseItems = purchaseItems;
+	}
+
+	public List<EgBillPurchaseItemsDetails> getEgBillPurchaseItemsDetails() {
+		return egBillPurchaseItemsDetails;
+	}
+
+	public void setEgBillPurchaseItemsDetails(List<EgBillPurchaseItemsDetails> egBillPurchaseItemsDetails) {
+		this.egBillPurchaseItemsDetails = egBillPurchaseItemsDetails;
+	}
+
+	public EgBillregister() {
     }
 
     public EgBillregister(final String billnumber, final Date billdate, final BigDecimal billamount,
@@ -436,7 +478,15 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.creditDetails = creditDetails;
     }
 
-    public List<EgBilldetails> getNetPayableDetails() {
+    public List<EgBilldetails> getPercentDetails() {
+		return percentDetails;
+	}
+
+	public void setPercentDetails(List<EgBilldetails> percentDetails) {
+		this.percentDetails = percentDetails;
+	}
+
+	public List<EgBilldetails> getNetPayableDetails() {
         return netPayableDetails;
     }
 
@@ -489,4 +539,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     public enum BillStatus {
         CREATED, APPROVED, REJECTED, CANCELLED
     }
+    
+
 }

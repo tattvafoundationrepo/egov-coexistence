@@ -61,7 +61,8 @@
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.account.code" text="Account Code"/></th>
-				<th><spring:message code="lbl.account.head" text="Account Head"/></th>
+				<th><spring:message code="lbl.account.head" text="Account Head"/></th>	
+				<th><spring:message code="lbl.percentage.deduction" text="Percentage Deduction"/></th>		
 				<th><spring:message code="lbl.deduction.amount" text="Deduction Amount"/></th>
 				<th><spring:message code="lbl.action" text="Action"/></th> 					
 			</tr>
@@ -78,7 +79,10 @@
 							<input type="text" id="creditDetails[0].creditAccountHead" name="creditDetails[0].creditAccountHead"  class="form-control creditdetailname" disabled>  
 						</td>
 						<td>
-							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  />
+                          <form:input path="percentDetails[0].percent" id="percentDetails[0].percent" class="form-control table-input text-right percent" onkeyup="decimalvalue(this);" onblur="calculateAndAssign();" data-idx="0" data-optional="0" data-pattern="decimalvalue" maxlength="5" />
+                        </td>
+						<td>
+							<form:input path="creditDetails[0].creditamount" id="creditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"   />
 						</td> 
 						<td class="text-center"><span style="cursor:pointer;" onclick="addCreditDetailsRow();"><i class="fa fa-plus"></i></span>
 						 <span class="add-padding credit-delete-row" onclick="deleteCreditDetailsRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
@@ -94,6 +98,9 @@
 								<td>
 									<input type="text" id="creditDetails[${item.index }].creditAccountHead" name="creditDetails[${item.index }].creditAccountHead"  class="form-control creditdetailname" disabled value="${billDeatils.chartOfAccounts.name }">  
 								</td>
+								<td>
+                                    <form:input path="percentDetails[${item.index }].percent" id="percentDetails[${item.index }].percent" class="form-control table-input text-right percent" onkeyup="decimalvalue(this);" onblur="calculateAndAssign();" data-idx="0" data-optional="0" data-pattern="decimalvalue" maxlength="5" />
+                                </td>	
 								<td>
 									<form:input path="creditDetails[${item.index }].creditamount" id="creditDetails[${item.index }].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12" value="${billDeatils.creditamount }"  />
 								</td> 

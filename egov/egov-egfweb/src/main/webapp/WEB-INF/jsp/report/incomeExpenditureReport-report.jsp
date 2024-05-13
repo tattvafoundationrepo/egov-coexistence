@@ -190,7 +190,7 @@ th.bluebgheadtd {
 							id="department" list="dropdownData.departmentList" listKey="code"
 							listValue="name" headerKey="null" headerValue="%{getText('lbl.choose.options')}"
 							value="model.department.code" /></td>
-					<td class="bluebox"><s:text name="report.fund" />:</td>
+					<td class="bluebox"><s:text name="Source Of Fund" />:</td>
 					<td class="bluebox"><s:select name="fund" id="fund"
 							list="dropdownData.fundDropDownList" listKey="id"
 							listValue="name" headerKey="0" headerValue="%{getText('lbl.choose.options')}"

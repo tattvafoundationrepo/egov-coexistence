@@ -1187,6 +1187,8 @@ public class CreateVoucher {
 			// setChartOfAccounts();
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
 			txnList = transactions.toArray(txnList);
+			for (Transaxtion txn : txnList) {
+			    System.out.println(txn);}
 			final SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 			if (!chartOfAccounts.postTransaxtions(txnList, formatter.format(vh.getVoucherDate())))
 				throw new ApplicationRuntimeException("Voucher creation Failed");
@@ -1199,7 +1201,7 @@ public class CreateVoucher {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", ve.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
-        } catch (final TaskFailedException e) {
+        } catch (final Exception e) { //--Pankaj Changes
             LOGGER.error(ERR, e);
             throw new ApplicationRuntimeException(e.getMessage());
         }

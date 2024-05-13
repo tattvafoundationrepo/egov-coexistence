@@ -56,7 +56,7 @@
 	<td style="width: 5%"></td>
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<% count++; %>
-		<td class="bluebox"><s:text name="voucher.fund" /> <s:if
+		<td class="bluebox"><s:text name="Source Of Fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
 				<span class="mandatory1" id="disableFundCheck">*</span>
 			</s:if></td>

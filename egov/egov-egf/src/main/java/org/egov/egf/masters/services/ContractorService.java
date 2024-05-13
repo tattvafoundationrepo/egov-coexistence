@@ -166,6 +166,23 @@ public class ContractorService implements EntityTypeService {
         return query.getResultList();
 
     }
+    
+    // Added by Mohsin
+    
+    public List<Contractor> searchNew() {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Contractor> createQuery = cb.createQuery(Contractor.class);
+        final Root<Contractor> contractors = createQuery.from(Contractor.class);
+        createQuery.select(contractors);
+        final Metamodel m = entityManager.getMetamodel();
+        
+        final List<Predicate> predicates = new ArrayList<>();
+       
+        createQuery.where(predicates.toArray(new Predicate[] {}));
+        final TypedQuery<Contractor> query = entityManager.createQuery(createQuery);
+        return query.getResultList();
+
+    }
 
     public List<Contractor> getAllActiveContractors() {
         return contractorRepository.findByStatus();
@@ -198,6 +215,20 @@ public class ContractorService implements EntityTypeService {
 	public List<? extends org.egov.commons.utils.EntityType> getEntitiesById(List<Long> idsList)
 			throws ValidationException {
 		return Collections.emptyList();
+	}
+	
+	public String fetchLastId() {
+	    Long lastId =  contractorRepository.findMaxId()+1;
+	    String code;
+	    if(lastId != null) {
+	    	if(lastId < 1000) 
+	    		code = "Con/001/"+String.format("%04d", lastId);
+	    	else
+	    		code = "Con/001/"+lastId;
+	    }
+	    else
+	    	code = "Con/001/0001";
+	    return  code;
 	}
 
 }

@@ -48,9 +48,11 @@
 package org.egov.egf.contractorbill.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.egov.model.bills.EgBillregister;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -64,5 +66,9 @@ public interface ContractorBillRepository extends JpaRepository<EgBillregister, 
     EgBillregister findByBillnumber(final String billNumber);
 
     List<EgBillregister> findByBillnumberContainingIgnoreCase(final String billNumber);
+    
+    @Query("SELECT max(e.billnumber) FROM EgBillregister e WHERE e.billnumber LIKE 'Con/001%'")
+    Optional<String> findMaxBillNumberStartingWithCon();
 
 }
+

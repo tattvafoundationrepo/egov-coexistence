@@ -205,7 +205,8 @@ public class CreateContractorBillController extends BaseBillController {
 	public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model,
 			HttpServletRequest request) {
 		setDropDownValues(model);
-		model.addAttribute("billNumberGenerationAuto", contractorBillService.isBillNumberGenerationAuto());
+		model.addAttribute("billNumberGenerationAuto", contractorBillService.generateConBillNumber());
+	//	model.addAttribute("billNumberGenerationAuto", contractorBillService.isBillNumberGenerationAuto());
 		model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
 		prepareWorkflow(model, egBillregister, new WorkflowContainer());
 		prepareValidActionListByCutOffDate(model);
@@ -219,6 +220,8 @@ public class CreateContractorBillController extends BaseBillController {
 	public String create(@Valid @ModelAttribute("egBillregister") final EgBillregister egBillregister,
 			final Model model, final BindingResult resultBinder, final HttpServletRequest request,
 			@RequestParam @SafeHtml final String workFlowAction) throws IOException, ParseException {
+		
+		model.addAttribute("billNumberGenerationAuto", contractorBillService.generateConBillNumber());
 
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {
@@ -314,6 +317,7 @@ public class CreateContractorBillController extends BaseBillController {
 		prepareValidActionListByCutOffDate(model);
 		model.addAttribute(CONTRACTOR_ID,
 				workOrderService.getByOrderNumber(egBillregister.getWorkordernumber()).getContractor().getId());
+		model.addAttribute("billNumberGenerationAuto", contractorBillService.generateConBillNumber());
 		return CONTRACTORBILL_FORM;
 	}
 
@@ -530,3 +534,4 @@ public class CreateContractorBillController extends BaseBillController {
 		return egBillregister;
 	}
 }
+

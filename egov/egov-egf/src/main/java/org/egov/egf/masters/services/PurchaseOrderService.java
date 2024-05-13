@@ -51,6 +51,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -67,13 +70,17 @@ import org.egov.commons.service.AccountDetailKeyService;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.service.FundService;
+import org.egov.egf.masters.repository.PurchaseItemRepository;
 import org.egov.egf.masters.repository.PurchaseOrderRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.model.bills.EgBillregister;
+import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
 import org.egov.model.masters.PurchaseOrderSearchRequest;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,6 +117,9 @@ public class PurchaseOrderService implements EntityTypeService {
 
 	@Autowired
 	private SubSchemeService subSchemeService;
+	
+	@Autowired
+	private PurchaseItemRepository purchaseItemRepository;
 
 	public Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
@@ -126,6 +136,8 @@ public class PurchaseOrderService implements EntityTypeService {
 	public PurchaseOrder getByOrderNumber(final String orderNumber) {
 		return purchaseOrderRepository.findByOrderNumber(orderNumber);
 	}
+	
+	
 
 	@SuppressWarnings("deprecation")
 	@Transactional
@@ -148,9 +160,48 @@ public class PurchaseOrderService implements EntityTypeService {
 		if (purchaseOrder.getSupplier() != null && purchaseOrder.getSupplier().getId() != null) {
 			purchaseOrder.setSupplier(supplierService.getById(purchaseOrder.getSupplier().getId()));
 		}
-		purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+		
+		System.out.println(purchaseOrder.getId());
+		
+		List<PurchaseItems> purchaseItemsList = new ArrayList<>();
+		
+		System.out.println(purchaseOrder.getPurchaseItems().get(0).getQuantity());
+		
+		
+		  for(int i=0; i< purchaseOrder.getPurchaseItems().size(); i++) 
+		  { 
+			  PurchaseItems	  purchaseItems = new PurchaseItems();
+		  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
+		  
+		  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
+		  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+		  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
+		  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
+		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+		  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
+		  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
+		  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());
+		  purchaseItems.setPurchaseOrder(purchaseOrder);
+		  purchaseItems.setOrderNumber(purchaseOrder.getOrderNumber());
+		  purchaseItemsList.add(purchaseItems);
+		  
+		  }		 
+			
+		purchaseOrder.setPurchaseItems(purchaseItemsList);
+		
+		purchaseOrder = purchaseOrderRepository.saveAndFlush(purchaseOrder);
+		
 		saveAccountDetailKey(purchaseOrder);
+		
 		return purchaseOrder;
+	}
+	
+	
+	
+	@Transactional
+	public PurchaseItems create(PurchaseItems ac) {
+		return	purchaseOrderRepository.save(ac);
+
 	}
 
 	@Transactional
@@ -196,6 +247,34 @@ public class PurchaseOrderService implements EntityTypeService {
 			savedPurchaseOrder.setSanctionNumber(purchaseOrder.getSanctionNumber());
 			savedPurchaseOrder.setSanctionDate(purchaseOrder.getSanctionDate());
 			setAuditDetails(savedPurchaseOrder);
+			
+			/*--------------------------------------purchase items modification-------------------------------*/                  
+			List<PurchaseItems> purchaseItemsList = new ArrayList<>();
+			for(int i=0; i< purchaseOrder.getPurchaseItems().size(); i++) 
+			  { 
+				  PurchaseItems	  purchaseItems = new PurchaseItems();
+			  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
+			 // purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+			  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
+			  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+			  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
+			  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
+			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+			  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
+			  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
+			  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());
+			  purchaseItems.setPurchaseOrder(purchaseOrder);
+			  purchaseItems.setOrderNumber(purchaseOrder.getOrderNumber());
+			  purchaseItemsList.add(purchaseItems);
+			  
+			  }		 
+				
+			purchaseOrder.setPurchaseItems(purchaseItemsList);
+			
+			purchaseOrder = purchaseOrderRepository.saveAndFlush(purchaseOrder);
+			
+			/*--------------------------------------purchase items modification end-------------------------------*/ 
+			
 			purchaseOrder = purchaseOrderRepository.save(savedPurchaseOrder);
 		}
 		return purchaseOrder;
@@ -281,4 +360,59 @@ public class PurchaseOrderService implements EntityTypeService {
 		return Collections.emptyList();
 	}
 
+	public void deletePurchaseItemById(Long id) {
+		
+		purchaseItemRepository.delete(id);
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	 public synchronized String generatePurchaseOrderNumber() {
+	        
+	        
+	        String financialYear = getFfinancialYear();
+	        
+	        Long latestOrderNumber = getLastPurchaseOrderNumber();
+	        
+	       if (latestOrderNumber != null) {           
+
+	        String orderNumber = "PO/001/" + financialYear + "/" + "0000" +(latestOrderNumber+1); 
+	        
+	        return orderNumber;
+	        
+	        
+	       
+	       }
+	       else {
+	           return "PO/001/" + financialYear + "/" + "00001";
+	      }
+	    }
+
+	   
+	      //added by Navajit
+	        private static String getFfinancialYear() {
+	            LocalDate today = LocalDate.now();
+	            int year = today.getYear();
+	            int month = today.getMonthValue();
+
+	            String financialYear;
+	            if (month >= 4) {
+	                // Financial year starts from April
+	                financialYear = String.format("%02d", year % 100) + "-" + String.format("%02d", (year + 1) % 100);
+	            } else {
+	                financialYear = String.format("%02d", (year - 1) % 100) + "-" + String.format("%02d", year % 100);
+	            }
+	            return financialYear;
+	        }
+	     
+	    
+	    //added by Navajit
+	    
+	      public Long getLastPurchaseOrderNumber() { 
+	          return purchaseOrderRepository.findMaxId(); 
+	          }
+
+	
 }
+

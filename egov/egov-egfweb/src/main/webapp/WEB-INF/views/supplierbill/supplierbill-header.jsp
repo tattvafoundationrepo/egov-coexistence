@@ -51,17 +51,21 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
+<script>
+document.getElementById("billamount").readOnly = true;
+</script>
+
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		
 	</div>
 	<div class="form-group">
 		<c:choose>
-			<c:when test="${!billNumberGenerationAuto}">
+			<c:when test="${billNumberGenerationAuto}">
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" />
+					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" value="${billNumberGenerationAuto}" readonly="true"/>
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
@@ -73,6 +77,12 @@
 				</div>
 			</c:when>
 			<c:otherwise>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/><span class="mandatory"></span>
+                </label>
+                <div class="col-sm-3 add-margin">
+                    <form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" value="${billNumberGenerationAuto}" readonly="true"/>
+                    <form:errors path="billnumber" cssClass="add-margin error-msg" />
+                </div>
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -104,9 +114,9 @@
 			<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="workordernumber" data-first-option="false" id="purchaseOrder" class="form-control" required="required"  >
+			<form:select path="workordernumber" data-first-option="false" id="purchaseOrder" class="form-control" required="required" onchange="getPurchaseItemsByOrderId()">
 				<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
-				<form:options items="${purchaseOrders}" itemValue="name" itemLabel="orderNumber" />
+				<form:options items="${purchaseOrders}" itemValue="name" itemLabel="orderNumber"/>
 			</form:select>
 			<form:errors path="workordernumber" cssClass="add-margin error-msg" />
 		</div>
@@ -115,11 +125,12 @@
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right">
-			<spring:message code="lbl.fund" text="Fund"/>
+			<spring:message code="lbl.source of fund" text="Source Of Fund"/>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden class="form-control patternvalidation" path="egBillregistermis.fund" id="fundId"  />
 			<form:input class="form-control patternvalidation" path="egBillregistermis.fund.name" id="fundName"  value="${fundName}" disabled="true"/>
+			
 		</div>
 		
 		<label class="col-sm-2 control-label text-right">
@@ -198,7 +209,8 @@
 			<spring:message code="lbl.party.bill.amount" text="Party Bill Amount"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:input  path="billamount" id="billamount" class="form-control patternvalidation" data-pattern="decimalvalue" required="required"/>
+		<form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
+			<form:input  path="billamount" id="billamount" class="form-control patternvalidation" data-pattern="decimalvalue" required="required" onkeydown="return false;"/>
 			<form:errors path="billamount" cssClass="add-margin error-msg" />		
 		</div>
 		
@@ -216,3 +228,4 @@
 		</div>
 	</div>
 </div>
+

@@ -57,11 +57,11 @@
 	</div>
 	<div class="form-group">
 		<c:choose>
-			<c:when test="${!billNumberGenerationAuto}">
+			<c:when test="${billNumberGenerationAuto}">
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" />
+					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" value="${billNumberGenerationAuto}" readonly="true"/>
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
@@ -75,6 +75,12 @@
 				</div>
 			</c:when>
 			<c:otherwise>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/><span class="mandatory"></span>
+                </label>
+                <div class="col-sm-3 add-margin">
+                    <form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" value="${billNumberGenerationAuto}" readonly="true"/>
+                    <form:errors path="billnumber" cssClass="add-margin error-msg" />
+                </div>
 				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -119,7 +125,7 @@
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right">
-			<spring:message code="lbl.fund" text="Fund"/>
+			<spring:message code="lbl.source of fund" text="Source Of Fund"/>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden class="form-control patternvalidation" path="egBillregistermis.fund" id="fundId"  />

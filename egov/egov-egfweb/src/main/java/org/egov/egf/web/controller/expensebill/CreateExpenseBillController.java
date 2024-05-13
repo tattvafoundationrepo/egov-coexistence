@@ -164,6 +164,7 @@ public class CreateExpenseBillController extends BaseBillController {
 			}
 		}
 		setDropDownValues(model);
+		model.addAttribute("billNumberGenerationAuto", expenseBillService.generateExpBillNumber());
 		model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
 		prepareWorkflow(model, egBillregister, new WorkflowContainer());
 		prepareValidActionListByCutOffDate(model);
@@ -177,6 +178,7 @@ public class CreateExpenseBillController extends BaseBillController {
 	public String create(@Valid @ModelAttribute("egBillregister") final EgBillregister egBillregister,
 			final Model model, final BindingResult resultBinder, final HttpServletRequest request,
 			@RequestParam @SafeHtml final String workFlowAction) throws IOException, ParseException {
+		model.addAttribute("billNumberGenerationAuto", expenseBillService.generateExpBillNumber());
 		LOGGER.info("ExpenseBill is creating with user ::" + ApplicationThreadLocals.getUserId());
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {
@@ -254,6 +256,7 @@ public class CreateExpenseBillController extends BaseBillController {
 
 	private void populateDataOnErrors(final EgBillregister egBillregister, final Model model,
 			final HttpServletRequest request) {
+		model.addAttribute("billNumberGenerationAuto", expenseBillService.generateExpBillNumber());
 		setDropDownValues(model);
 		model.addAttribute(STATE_TYPE, egBillregister.getClass().getSimpleName());
 		prepareWorkflow(model, egBillregister, new WorkflowContainer());
@@ -375,3 +378,4 @@ public class CreateExpenseBillController extends BaseBillController {
 	}
 
 }
+

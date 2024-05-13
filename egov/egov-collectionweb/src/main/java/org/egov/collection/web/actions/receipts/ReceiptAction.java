@@ -683,8 +683,8 @@ public class ReceiptAction extends BaseFormAction {
 
 			BigDecimal debitAmount = BigDecimal.ZERO;
 
-			for (final ReceiptDetail creditChangeReceiptDetail : receiptDetailList)
-				for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
+			for (final ReceiptDetail creditChangeReceiptDetail : receiptDetailList) {
+				for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 					if (creditChangeReceiptDetail.getReceiptHeader().getReferencenumber()
 							.equals(receiptDetail.getReceiptHeader().getReferencenumber())
 							&& receiptDetail.getOrdernumber().equals(creditChangeReceiptDetail.getOrdernumber())) {
@@ -697,6 +697,8 @@ public class ReceiptAction extends BaseFormAction {
 						debitAmount = debitAmount.add(creditChangeReceiptDetail.getCramount());
 						debitAmount = debitAmount.subtract(creditChangeReceiptDetail.getDramount());
 					}
+		}
+	}
 
 			if (chequeInstrumenttotal != null && chequeInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
 				receiptHeader.setTotalAmount(chequeInstrumenttotal);
@@ -709,25 +711,48 @@ public class ReceiptAction extends BaseFormAction {
 		// billing system
 		ReceiptResponse receiptResponse = receiptHeaderService.populateAndPersistReceipts(receiptHeader,
 				receiptInstrList);
-
-		message = "Receipt created with receipt number: "
-				+ receiptResponse.getReceipts().get(0).getBill().get(0).getBillDetails().get(0).getReceiptNumber();
+		
+		//message = "Receipt created with receipt number: " + receiptResponse;
+		
+		/*
+		 * String receiptNumber = "RCPT123456"; // Hardcoded receipt number message =
+		 * message = "Receipt created with receipt number: " + receiptNumber;
+		 */
+		
+		
+		  message = "Receipt created with receipt number: " +
+		  receiptResponse.getReceipts().get(0).getBill().get(0).getBillDetails().get(0)
+		  .getReceiptNumber();
+		 
+		 
 		// populate all receipt header ids except the cancelled receipt
 		// (in effect the newly created receipts)
 		selectedReceipts = new String[noOfNewlyCreatedReceipts];
 		int i = 0;
 		if (receiptHeader.getId() != null && !receiptHeader.getId().equals(oldReceiptId)) {
-			selectedReceipts[i] = receiptHeader.getReceiptnumber();
+		selectedReceipts[i] = receiptHeader.getReceiptnumber();
 			i++;
 		}
 
-		final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-		LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: " + receiptHeader.getReceiptnumber()
+    	final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		 LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: " + receiptHeader.getReceiptnumber()
 				+ (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
 						: "")
 				+ "; Time taken(ms) = " + elapsedTimeMillis);
 		returnValue = SUCCESS;
 		return returnValue;
+		/*
+		 * selectedReceipts = new String[noOfNewlyCreatedReceipts]; int i = 0; if
+		 * (receiptHeader.getId() != null &&
+		 * !receiptHeader.getId().equals(oldReceiptId)) { selectedReceipts[i] =
+		 * "RCPT123456"; // Hardcoded receipt number i++; }
+		 * 
+		 * final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		 * LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: " +
+		 * (receiptHeader.getConsumerCode() != null ? " and consumer code: " +
+		 * receiptHeader.getConsumerCode() : "") + "; Time taken(ms) = " +
+		 * elapsedTimeMillis); returnValue = SUCCESS; return returnValue;
+		 */
 	}
 
 	private void validateMiscDetails() {
@@ -914,6 +939,8 @@ public class ReceiptAction extends BaseFormAction {
 			InstrumentType instType = new InstrumentType();
 			if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)) {
 				instType.setType(CollectionConstants.INSTRUMENTTYPE_CHEQUE);
+				instType.setId(12l);                                           //added by nava
+				instType.setIsActive(true);                                    //added by nava
 				instrumentHeader.setInstrumentType(instType);
 			} else if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
 				instType.setType(CollectionConstants.INSTRUMENTTYPE_DD);

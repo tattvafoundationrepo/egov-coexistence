@@ -133,6 +133,7 @@
             </div>
             <div class="col-sm-3 add-margin view-content"><fmt:formatDate value="${purchaseOrder.sanctionDate}" pattern="dd/MM/yyyy" /></div>
           </div>
+          <%@ include file="purchaseorder-items-edit.jsp" %>
         </div>
       </div>
     </div>
@@ -146,3 +147,4 @@
      </c:if>  
       </div>
     </div>
+    

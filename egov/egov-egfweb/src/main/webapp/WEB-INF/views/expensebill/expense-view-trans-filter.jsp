@@ -53,7 +53,7 @@
 	<c:choose>
 		<c:when test="${headerFields.contains('fund')}">
 			<div class="col-md-3 col-xs-6 add-margin">
-				<spring:message code="lbl.fund" text="Fund"/>
+				<spring:message code="lbl.fund" text="Source Of Fund"/>
 			</div>
 			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 				<c:out default="N/A" value="${egBillregister.egBillregistermis.fund.name }" />

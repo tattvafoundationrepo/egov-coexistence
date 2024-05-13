@@ -1011,6 +1011,38 @@ function validateCutOff()
 	}
 	return false;
 }
+
+
+function calculateAndAssign() {
+  var debitamt = 0;
+  for (var count = 0; count <=debitAmountrowcount; ++count) {
+
+		if (null != document.getElementById("tempDebitDetails[" + count
+				+ "].debitamount")) {
+			var val = document.getElementById("tempDebitDetails[" + count
+					+ "].debitamount").value;
+			if (val != "" && !isNaN(val)) {
+//				debitamt = debitamt + parseFloat(val);
+				debitamt = parseFloat(Number(debitamt) + Number(val)).toFixed(2);
+			}
+		}
+	}
+    for (var count = 0; count <=creditAmoutrowcount; ++count) {
+        if (null != document.getElementById("percentDetails[" + count
+				+ "].percent")) {
+       
+        var percentValue = document.getElementById("percentDetails[" + count
+					+ "].percent").value;
+        
+        if (!isNaN(percentValue) && !isNaN(debitamt) && percentValue !== "" && debitamt !== "") {
+            var calculatedValue = Number(debitamt) * Number(percentValue) / 100;
+            document.getElementById("tempCreditDetails[" + count + "].creditamount").value = calculatedValue.toFixed(2);
+        } else {
+            console.log("Invalid input or empty fields.");
+        }
+    }
+    }
+}
 function calcualteNetpaybleAmount(){
 	
 
@@ -1029,7 +1061,21 @@ function calcualteNetpaybleAmount(){
 			}
 		}
 	}
+	/*for (var count = 0; count <=creditAmoutrowcount; ++count) {
 
+		if (null != document.getElementById("tempCreditDetails[" + count
+				+ "].creditamount")) {
+			var val1 = document.getElementById("percentDetails[" + count
+					+ "].percent").value;
+			var val = (Number(debitamt)*Number(val1)/100);		
+			if (val != "" && !isNaN(val)) {
+//				creditamt = creditamt + parseFloat(val);
+				creditamt = parseFloat(Number(creditamt) + Number(val)).toFixed(2);
+				document.getElementById("tempCreditDetails[" + count + "].creditamount").value = Number(val).toFixed(2);
+			}
+		}
+	}*/
+  //commented to add percentage deduction
 	for (var count = 0; count <=creditAmoutrowcount; ++count) {
 
 		if (null != document.getElementById("tempCreditDetails[" + count

@@ -116,10 +116,20 @@ public class CreateContractorController {
 		model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
 		model.addAttribute("statuses",
 				egwStatusHibDAO.getStatusByModule(FinancialConstants.STATUS_MODULE_NAME_CONTRACTOR));
+		model.addAttribute("ContractorCodeAutoGeneration",contractorService.fetchLastId());
+
 	}
 
 	@PostMapping(value = "/newform")
 	public String showNewForm(@ModelAttribute(STR_CONTRACTOR) final Contractor contractor, final Model model) {
+		prepareNewForm(model);
+		model.addAttribute(STR_CONTRACTOR, new Contractor());
+		return NEW;
+	}
+	
+	//Added by Mohsin
+	@GetMapping(value = "/newContractorform")
+	public String showNewContractorForm(@ModelAttribute(STR_CONTRACTOR) final Contractor contractor, final Model model) {
 		prepareNewForm(model);
 		model.addAttribute(STR_CONTRACTOR, new Contractor());
 		return NEW;
@@ -149,6 +159,7 @@ public class CreateContractorController {
 		final Contractor contractor = contractorService.getById(id);
 		prepareNewForm(model);
 		model.addAttribute(STR_CONTRACTOR, contractor);
+		model.addAttribute("ContractorCodeAutoGeneration",true);
 		return EDIT;
 	}
 
@@ -190,6 +201,16 @@ public class CreateContractorController {
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
 	}
 
+	// Added by Mohsin
+	
+	@PostMapping(value = "/ajaxsearch/new/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String ajaxsearchNew(@PathVariable("mode") @SafeHtml final String mode) {
+		final List<Contractor> searchResultList = contractorService.searchNew();
+		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
+	}
+	
+	
 	public Object toSearchResultJson(final Object object) {
 		final GsonBuilder gsonBuilder = new GsonBuilder();
 		final Gson gson = gsonBuilder.registerTypeAdapter(Contractor.class, new ContractorJsonAdaptor()).create();

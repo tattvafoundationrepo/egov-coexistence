@@ -226,7 +226,7 @@ today = dd+'/'+mm+'/'+yyyy;
 					<tr>
 						<td class="bluebox"></td>
 						<td class="bluebox"><div id="fundlbl">
-								<s:text name="voucher.fund" />
+								<s:text name="Source Of Fund" />
 								<span id="fundStar" class="mandatory1">*</span>
 							</div>
 						<td class="bluebox"><s:select name="fundId" id="fundId"

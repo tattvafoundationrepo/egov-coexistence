@@ -65,4 +65,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     
     @Query("from Supplier where status.code='Active'")
     public List<Supplier> findByStatus();
+    
+    @Query(value = "SELECT MAX(id) FROM Supplier")
+    Long findMaxId();
 }

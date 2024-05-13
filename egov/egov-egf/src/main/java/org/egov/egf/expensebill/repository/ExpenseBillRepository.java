@@ -49,9 +49,11 @@ package org.egov.egf.expensebill.repository;
 
 import org.egov.model.bills.EgBillregister;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author venki
@@ -64,5 +66,9 @@ public interface ExpenseBillRepository extends JpaRepository<EgBillregister, Lon
     EgBillregister findByBillnumber(final String billNumber);
 
     List<EgBillregister> findByBillnumberContainingIgnoreCase(final String billNumber);
+    
+    @Query("SELECT max(e.billnumber) FROM EgBillregister e WHERE e.billnumber LIKE 'Exp%'")
+    Optional<String> findMaxBillNumberStartingWithExp();
 
 }
+

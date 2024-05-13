@@ -98,6 +98,8 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
     private BigDecimal debitamount;
     @Min(1)
     private BigDecimal creditamount;
+    
+    private BigDecimal percent;//nava
 
     private Date lastupdatedtime;
 
@@ -128,7 +130,7 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
 
     public EgBilldetails(final Integer id, final EgBillregister egBillregister,
             final BigDecimal functionid, final BigDecimal glcodeid, final BigDecimal debitamount,
-            final BigDecimal creditamount, final Date lastupdatedtime, final Set<EgBillPayeedetails> egBillPaydetailes,
+            final BigDecimal creditamount, final BigDecimal percent, final Date lastupdatedtime, final Set<EgBillPayeedetails> egBillPaydetailes,
             final String narration) {
         this.id = id;
         this.egBillregister = egBillregister;
@@ -136,6 +138,7 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
         this.glcodeid = glcodeid;
         this.debitamount = debitamount;
         this.creditamount = creditamount;
+        this.percent = percent;
         this.lastupdatedtime = lastupdatedtime;
         this.egBillPaydetailes = egBillPaydetailes;
         this.narration = narration;
@@ -190,8 +193,17 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
     public void setCreditamount(final BigDecimal creditamount) {
         this.creditamount = creditamount;
     }
+    
 
-    public Date getLastupdatedtime() {
+    public BigDecimal getPercent() {
+		return percent;
+	}
+
+	public void setPercent(BigDecimal percent) {
+		this.percent = percent;
+	}
+
+	public Date getLastupdatedtime() {
         return lastupdatedtime;
     }
 

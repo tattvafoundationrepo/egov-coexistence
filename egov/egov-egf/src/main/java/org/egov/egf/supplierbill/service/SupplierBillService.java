@@ -47,14 +47,19 @@
  */
 package org.egov.egf.supplierbill.service;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -74,6 +79,8 @@ import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.dashboard.event.FinanceEventType;
 import org.egov.egf.dashboard.event.listener.FinanceDashboardService;
 import org.egov.egf.expensebill.repository.DocumentUploadRepository;
+import org.egov.egf.masters.repository.PurchaseItemsBillRegisterRepository;
+import org.egov.egf.masters.repository.PurchaseItemRepository;
 import org.egov.egf.supplierbill.repository.SupplierBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
@@ -94,9 +101,14 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillPayeedetails;
+import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.masters.PurchaseItems;
+import org.egov.model.masters.PurchaseOrder;
+import org.egov.model.repository.BudgetDetailRepository;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
@@ -105,12 +117,20 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
+import org.objectweb.asm.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * @author venki
@@ -181,7 +201,17 @@ public class SupplierBillService {
     
     @Autowired
     FinanceDashboardService finDashboardService;
-
+    
+    @Autowired
+    private PurchaseItemRepository purchaseItemRepository;
+    
+    @Autowired
+    private PurchaseItemsBillRegisterRepository puechaseItemsBillRegisterRepo;
+    
+   
+   
+	
+    
     @Autowired
     public SupplierBillService(final SupplierBillRepository supplierBillRepository, final ScriptService scriptExecutionService) {
         this.supplierBillRepository = supplierBillRepository;
@@ -199,6 +229,10 @@ public class SupplierBillService {
     public EgBillregister getByBillnumber(final String billNumber) {
         return supplierBillRepository.findByBillnumber(billNumber);
     }
+    
+    public List<EgBillPurchaseItemsDetails> getByBillnumber1(final String billregister_id) {
+        return puechaseItemsBillRegisterRepo.findAllByBillRegister(billregister_id);
+    }
 
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister) {
@@ -208,6 +242,7 @@ public class SupplierBillService {
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
             final String additionalRule, final String workFlowAction, final String approvalDesignation) {
+    
         if (StringUtils.isBlank(egBillregister.getBilltype()))
             egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
         egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
@@ -241,8 +276,49 @@ public class SupplierBillService {
          } catch (final ValidationException e) {
          throw new ValidationException(e.getErrors());
          }
+		
+         
 
         final EgBillregister savedEgBillregister = supplierBillRepository.save(egBillregister);
+        
+        /*----------------------Purcahseitems save code -------------------------------*/
+        
+        System.out.println(egBillregister.getPurchaseItems());
+     	Gson gson = new Gson();      		
+     		
+     		List<PurchaseItems> purchaseItemsList = gson.fromJson(egBillregister.getPurchaseObject(), new TypeToken<List<PurchaseItems>>(){}.getType());
+     		
+     		List<EgBillPurchaseItemsDetails> egBillPurchaseItemsDetailsList = new ArrayList<>();      		
+			
+     							
+     		for(PurchaseItems purchaseItems : purchaseItemsList) {
+     			
+     			LOG.info("Filtered PurchaseItems: {} ", purchaseItemsList);
+     			
+     			EgBillPurchaseItemsDetails egBillPurchaseItemsDetails = new EgBillPurchaseItemsDetails();
+     			
+     			egBillPurchaseItemsDetails.setItemCode(purchaseItems.getItemCode());     		
+     		    egBillPurchaseItemsDetails.setUnitRate(purchaseItems.getUnitRate());
+     		    egBillPurchaseItemsDetails.setGstRate(purchaseItems.getGstRate());
+     		    egBillPurchaseItemsDetails.setUnitValueWithGst(purchaseItems.getUnitValueWithGst());
+     		    egBillPurchaseItemsDetails.setQuantity(purchaseItems.getQuantity());
+     		    egBillPurchaseItemsDetails.setAmount(purchaseItems.getAmount());
+     		    egBillPurchaseItemsDetails.setCreatedby(egBillregister.getCreatedBy());
+     		    egBillPurchaseItemsDetails.setLastmodifiedby(egBillregister.getLastModifiedBy());
+     		    egBillPurchaseItemsDetails.setOrdernumber(purchaseItems.getOrderNumber());
+     		    egBillPurchaseItemsDetails.setEgBillregister(egBillregister); 		    
+     		 
+     		    
+     		   egBillPurchaseItemsDetailsList.add(egBillPurchaseItemsDetails);
+     		   
+     		  puechaseItemsBillRegisterRepo.save(egBillPurchaseItemsDetails);  		   
+     		   
+     		}
+     		  
+     		egBillregister.setPurchaseItems(purchaseItemsList);
+     		//puechaseItemsBillRegisterRepo.save(egBillPurchaseItemsDetailsList.get(0));
+     		
+     		/*----------------------Purcahseitems save code end---------------------------EgBillPurchaseItemsDetails----*/
 
         if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE)) {
             if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE.equals(egBillregister.getExpendituretype()))
@@ -512,6 +588,7 @@ public class SupplierBillService {
 
         return approvalPosition;
     }
+   
 
     public boolean isBillNumUnique(final String billnumber) {
         final EgBillregister bill = getByBillnumber(billnumber);
@@ -592,6 +669,10 @@ public class SupplierBillService {
         return budgetApprDetailsMap;
 
     }
+    
+    //code by testing 
+    
+   
 
     public List<Map<String, Object>> getBudgetDetailsForBill(EgBillregister billregister) {
 
@@ -689,4 +770,79 @@ public class SupplierBillService {
         List<Designation> desgnList = microServiceUtil.getDesignation(desgnCode);
         return !desgnList.isEmpty() ?  desgnList.get(0) : null;
     }
+    
+    
+    
+    //added by depepak
+    
+	/*
+	 * public List<BudgetDetail> findByBudgetGroupName(String groupName) { return
+	 * BudgetDetailRepository.findByBudgetGroupName(groupName); }
+	 */
+    
+    
+    
+    
+    public synchronized String generateSupBillNumber() {
+        // Get the current year
+        int year = LocalDate.now().getYear() % 100; // Get the last two digits of the year
+
+        // Get the current financial year
+        String financialYear = getFinancialYear();
+        
+        Optional<String> latestBillNumber = getLastSupplierBillNumber();
+        
+        if (latestBillNumber.isPresent()) {
+         String[] lastNumber = {""}; // Array to hold the last number
+        
+        
+        
+          latestBillNumber.ifPresent(input -> {
+            String pattern = "(\\d+)$";
+            Pattern r = Pattern.compile(pattern);
+            Matcher m = r.matcher(input);
+            
+            if (m.find()) {
+                lastNumber[0] = m.group(1);
+            } else {
+                System.out.println("No match found.");
+            }
+        });
+
+        // Construct the bill number in the format: sup/financial year/number
+        String billNumber = "Sup/001/" + financialYear + "/" + "0000" +(Integer.parseInt(lastNumber[0])+1); 
+        
+        return billNumber;
+        
+        }
+        else {
+            return "Sup/001/" + financialYear + "/" + "00001";
+        }
+    }
+
+     
+    //added by Navajit
+    private static String getFinancialYear() {
+        LocalDate today = LocalDate.now();
+        int year = today.getYear();
+        int month = today.getMonthValue();
+
+        String financialYear;
+        if (month >= 4) {
+            // Financial year starts from April
+            financialYear = String.format("%02d", year % 100) + "-" + String.format("%02d", (year + 1) % 100);
+        } else {
+            financialYear = String.format("%02d", (year - 1) % 100) + "-" + String.format("%02d", year % 100);
+        }
+        return financialYear;
+    }
+    
+    //added by Navajit
+    public Optional<String> getLastSupplierBillNumber() {
+        return supplierBillRepository.findMaxBillNumberStartingWithSup();
+    }
+    
+    
+    
 }
+

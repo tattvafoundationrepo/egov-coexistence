@@ -109,6 +109,8 @@ public class CreateSupplierController {
 		model.addAttribute("banks", createBankService.getByIsActiveTrueOrderByName());
 		model.addAttribute("statuses",
 				egwStatusHibDAO.getStatusByModule(FinancialConstants.STATUS_MODULE_NAME_SUPPLIER));
+		
+		model.addAttribute("SupplierCodeAutoGeneration",supplierService.fetchLastId());
 	}
 
 	@PostMapping(value = "/newform")
@@ -139,6 +141,7 @@ public class CreateSupplierController {
 		final Supplier supplier = supplierService.getById(id);
 		prepareNewForm(model);
 		model.addAttribute(STR_SUPPLIER, supplier);
+		model.addAttribute("SupplierCodeAutoGeneration",true);
 		return EDIT;
 	}
 

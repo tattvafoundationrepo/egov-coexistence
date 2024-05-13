@@ -43,7 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
+  ~total
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -111,6 +111,18 @@
     <form:hidden path="" name="netPayableId" id="netPayableId" value="${netPayableId}"/>
     <form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
     <form:hidden path="passedamount" name="passedamount" id="passedamount" value="${egBillregister.passedamount}"/>
+    <form:hidden class="form-control patternvalidation" path="" name="" id="itemList" value="${data.itemCode}}" />
+    <form:hidden class="form-control patternvalidation" path="" id="itemList1" value="${data.unitrte}" />
+    <form:hidden class="form-control patternvalidation" path="" id="itemList2" value="${data.quantity}" />
+    <form:hidden class="form-control patternvalidation" path="" id="itemList3" value="${data.amount}" />
+    <form:hidden class="form-control patternvalidation" path="purchaseObject" id="purchaseObject" name="purchaseObject" value="${purchaseObject}" />
+    
+
+    
+   
+    
+    
+    
 
     <div class="panel-title text-center" style="color: green;">
         <c:out value="${message}"/>
@@ -126,7 +138,9 @@
      <div class="tab-pane fade in active" id="supplierbillheader">
          <jsp:include page="supplierbill-header.jsp"/>
            <div class="panel panel-primary" data-collapsed="0">
-           <jsp:include page="supplier-accountcodetemplate.jsp"/>    
+           <jsp:include page="supplierbill-purchaseitems.jsp"/>           
+           <jsp:include page="supplier-accountcodetemplate.jsp"/> 
+         <%--   <jsp:include page="supplierbill-budgetdetailnew.jsp"/>  --%> 
              <jsp:include page="supplierbill-debitdetails.jsp"/>
              <jsp:include page="supplierbill-creditdetails.jsp"/>
              <jsp:include page="supplierbill-netpayable.jsp"/>
@@ -139,6 +153,7 @@
      </div>
 
 </form:form>
+
 <script src="<cdn:url value='/resources/app/js/i18n/jquery.i18n.properties.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
 <script
         src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>

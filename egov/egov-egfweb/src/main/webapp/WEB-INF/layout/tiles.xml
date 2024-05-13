@@ -730,6 +730,31 @@
         <put-attribute name="body" value="/WEB-INF/views/supplier/supplier-search.jsp"/>
     </definition>
     
+    
+    <definition name="grantAmountTransfer-new" extends="base_layout">
+<put-attribute name="page-title" value="title.grantAmountTransfer.create" cascade="true"/>
+<put-attribute name="body" value="/WEB-INF/views/grantAmountTransfer/grantAmountTransfer-new.jsp"/>
+</definition>
+<definition name="grantAmountTransfer-result" extends="base_layout">
+<put-attribute name="page-title" value="title.grantAmountTransfer.result" cascade="true"/>
+<put-attribute name="body" value="/WEB-INF/views/grantAmountTransfer/grantAmountTransfer-result.jsp"/>
+</definition>
+<definition name="grantAmountTransfer-edit" extends="base_layout">
+<put-attribute name="page-title" value="title.grantAmountTransfer.edit" cascade="true"/>
+<put-attribute name="body" value="/WEB-INF/views/grantAmountTransfer/grantAmountTransfer-edit.jsp"/>
+</definition>
+<definition name="grantAmountTransfer-view" extends="base_layout">
+<put-attribute name="page-title" value="title.grantAmountTransfer.view" cascade="true"/>
+<put-attribute name="body" value="/WEB-INF/views/grantAmountTransfer/grantAmountTransfer-view.jsp"/>
+</definition>
+<definition name="grantAmountTransfer-search" extends="base_layout">
+<put-attribute name="page-title" value="title.grantAmountTransfer.search" cascade="true"/>
+<put-attribute name="body" value="/WEB-INF/views/grantAmountTransfer/grantAmountTransfer-search.jsp"/>
+</definition>
+<definition name="grantAmountTransfer-cancellationsuccess" extends="base_layout">
+<put-attribute name="page-title" value="title.grantAmountTransfer.canellation.success" cascade="true"/>
+<put-attribute name="body" value="/WEB-INF/views/grantAmountTransfer/grantAmountTransfer-cancellationsuccess.jsp"/>
+</definition>
     <definition name="purchaseorder-new" extends="base_layout">
         <put-attribute name="page-title" value="title.purchaseorder.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/purchaseorder/purchaseorder-new.jsp"/>

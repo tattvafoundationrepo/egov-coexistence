@@ -84,7 +84,7 @@ public class EmailService {
             mimeMessage.setSubject(subject);
             mimeMessage.setText(mailBody);
             ByteArrayDataSource source = new ByteArrayDataSource(attachment, fileType);
-            mimeMessage.addAttachment(fileName, source);
+            //mimeMessage.addAttachment(fileName, source);
         } catch (MessagingException | IllegalArgumentException e) {
             throw new ApplicationRuntimeException("Error occurred while sending email with attachment", e);
         }

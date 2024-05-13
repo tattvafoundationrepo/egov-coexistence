@@ -51,9 +51,26 @@ package org.egov.commons.repository;
 import org.egov.commons.CChartOfAccounts;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.Query;
+import java.util.List;
+import java.util.Optional;
 
 @Repository 
 public interface CChartOfAccountsRepository extends JpaRepository<CChartOfAccounts,java.lang.Long> {
+
+@Query(value = "SELECT g.id AS general_ledger_id, g.* " + "FROM citya.generalledger g " +
+	       "JOIN citya.chartofaccounts c ON c.id = g.glcodeid " + "WHERE c.glcode BETWEEN ?1 AND ?2", nativeQuery = true)
+	  List<Object[]> Glcode(String glcode1, String glcode2);
+
+List<CChartOfAccounts> findByGlcodeIn(List<String> glcodes1);
+
+List<CChartOfAccounts> findByGlcodeStartsWith(String trim);
+
+List<CChartOfAccounts> findByName(String name);
+
+
+ 
+
+
 
 }

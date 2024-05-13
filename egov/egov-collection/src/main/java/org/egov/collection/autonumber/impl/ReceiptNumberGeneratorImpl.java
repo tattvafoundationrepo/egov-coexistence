@@ -70,11 +70,16 @@ public class ReceiptNumberGeneratorImpl implements ReceiptNumberGenerator {
     @Override
     public String generateReceiptNumber(final ReceiptHeader receiptHeader) {
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
+        System.out.println("financialyear"+financialYear);
         final SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        System.out.println("SimpleDateFormat"+sdf );
         final String formattedDate = sdf.format(receiptHeader.getReceiptdate());
+        System.out.println("formattedDate"+formattedDate);
         final String strObj = "SQ_RECEIPTHEADER_" + financialYear.getFinYearRange().replace("-", "_");
+        System.out.println(strObj);
         final String result = formattedDate + '/' + financialYear.getFinYearRange() + '/'
                 + databaseSequenceProvider.getNextSequence(strObj);
+        System.out.println(result);
         return result;
     }
 

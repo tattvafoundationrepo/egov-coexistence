@@ -199,6 +199,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Value("${egov.services.collection.service.receipts.create}")
     private String receiptCreateUrl;
+    
+   
+
 
     public ReceiptHeaderService() {
         super(ReceiptHeader.class);
@@ -1186,7 +1189,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         List billList = generateBill(consumerCode, receiptHeader.getService());
         return generateReceipt(receiptHeader, billList);
     }
-
+    
+   
+    
     private DemandResponse generateDemand(String consumerCode, ReceiptHeader receiptHeader) {
         DemandRequest request = new DemandRequest();
         final RestTemplate restTemplate = microserviceUtils.createRestTemplate();
@@ -1667,7 +1672,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             payment.setInstrumentStatus(instrumentStatus);
             payment.setTransactionDate(transactionDate);
             payment.setTransactionNumber(transactionNumber);
-            payment.setIfscCode(ifscCode);
+            payment.setIfscCode(null);
         } catch (ObjectNotFoundException e) {
             LOGGER.error("ERROR occurred while setting the instruments details",e);
         }

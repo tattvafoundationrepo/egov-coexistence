@@ -57,7 +57,7 @@
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fund')}">
 				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.Source Of fund" text = "Source Of Fund" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -70,7 +70,7 @@
 				</c:when>
 				<c:otherwise>
 				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.Source Of fund" text = "Source Of Fund" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.fund" data-first-option="false" id="fund" class="form-control"  >

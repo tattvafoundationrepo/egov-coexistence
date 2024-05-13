@@ -228,9 +228,11 @@ public class BankRemittanceAction extends BaseFormAction {
             final HashSet<String> fundCodeSet = new HashSet<>(0);
             List<BankAccountServiceMapping> mappings = microserviceUtils
                     .getBankAcntServiceMappingsByBankAcc(accountNumberId.toString(),null);
+         
             for (BankAccountServiceMapping basm : mappings) {
                 serviceCodeList.add(basm.getBusinessDetails());
             }
+            System.out.println(mappings.toString());
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
             resultList = remittanceService.findCashRemittanceDetailsForServiceAndFund("", StringUtils.join(serviceCodeList, ","),
                     StringUtils.join(fundCodeSet, ","), fromDate == null ? financialYear.getStartingDate() : fromDate,

@@ -56,6 +56,12 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.commons.CommonsUtil;
+import org.egov.egf.masters.model.PropertyTaxDemandRegister;
+import org.egov.egf.masters.model.PropertyTaxReceiptRegister;
+import org.egov.egf.masters.repository.PropertyTaxDemandRegisterRepository;
+import org.egov.egf.masters.repository.PropertyTaxReceiptRegisterRepository;
+import org.egov.egf.masters.services.PropertyTaxDemandRegisterService;
+import org.egov.egf.masters.services.PropertyTaxReceiptRegisterService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -138,6 +144,14 @@ public class JournalVoucherAction extends BaseVoucherAction
     
     @Autowired
     private CommonsUtil commonsUtil;
+    @Autowired
+    private PropertyTaxDemandRegisterService propertyTaxDemandRegisterService;
+    @Autowired
+    private PropertyTaxReceiptRegisterService propertyTaxReceiptRegisterService;
+    @Autowired
+    private PropertyTaxDemandRegisterRepository propertyTaxDemandRegisterRepository;
+    @Autowired
+    private PropertyTaxReceiptRegisterRepository propertyTaxReceiptRegisterRepository;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -152,6 +166,24 @@ public class JournalVoucherAction extends BaseVoucherAction
     @Action(value = "/voucher/journalVoucher-newForm")
     public String newForm()
     {
+    	List<PropertyTaxReceiptRegister> ptr = propertyTaxReceiptRegisterRepository.findAll();
+    	
+    	List<PropertyTaxDemandRegister> ptd = propertyTaxDemandRegisterRepository.findAll();
+    	 for (PropertyTaxReceiptRegister pt : ptr) {
+    		 if(pt.getFlag()==0) {
+    				List<PropertyTaxReceiptRegister> reciept = propertyTaxReceiptRegisterService.getAlllDatas(pt); 
+    				pt.setFlag(1);      
+    				propertyTaxReceiptRegisterRepository.save(pt);
+    		 }
+    	 }	
+    	 
+    	 for (PropertyTaxDemandRegister pt : ptd) {
+    		 if(pt.getFlag()==null) {
+    				List<PropertyTaxDemandRegister> demand = propertyTaxDemandRegisterService.executeNativeQuery( pt); 
+    				pt.setFlag(1);      
+    		        propertyTaxDemandRegisterRepository.save(pt);
+    		 }
+    	 }
         List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
@@ -537,3 +569,4 @@ public class JournalVoucherAction extends BaseVoucherAction
     }
 
 }
+

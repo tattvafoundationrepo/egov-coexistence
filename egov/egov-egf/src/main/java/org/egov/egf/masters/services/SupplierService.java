@@ -47,7 +47,10 @@
  */
 package org.egov.egf.masters.services;
 
+
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -200,5 +203,21 @@ public class SupplierService implements EntityTypeService {
 	public List<? extends org.egov.commons.utils.EntityType> getEntitiesById(List<Long> idsList)
 			throws ValidationException {
 		return Collections.emptyList();
+	}
+	
+	@Transactional
+	public String fetchLastId() {
+		
+	    Long lastId =  supplierRepository.findMaxId()+1;
+	    String supCode;
+	    if(lastId != null) {
+	    	if(lastId < 1000) 
+	    		supCode = "Sup/001/"+String.format("%04d", lastId);
+	    	else
+	    		supCode = "Sup/001/"+lastId;
+	    }
+	    else
+	    	supCode = "Sup/001/0001";
+	    return  supCode;
 	}
 }

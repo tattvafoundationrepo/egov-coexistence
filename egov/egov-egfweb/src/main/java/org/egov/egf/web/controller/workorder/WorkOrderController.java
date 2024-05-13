@@ -125,6 +125,7 @@ public class WorkOrderController {
 		model.addAttribute("funds", fundService.findAllActiveAndIsnotleaf());
 		model.addAttribute("departments", microserviceUtils.getDepartments());
 		model.addAttribute("contractors", contractorService.getAllActiveEntities(null));
+		model.addAttribute("orderNumberGenerationAuto", workOrderService.generateWorkOrderNumber());
 	}
 
 	@PostMapping(value = "/newform")
@@ -142,6 +143,8 @@ public class WorkOrderController {
 			prepareNewForm(model);
 			return NEW;
 		}
+		model.addAttribute("orderNumberGenerationAuto", workOrderService.generateWorkOrderNumber());
+
 
 		workOrderService.create(workOrder);
 
@@ -157,6 +160,7 @@ public class WorkOrderController {
 		workOrder.setEditAllFields(bills.isEmpty());
 		prepareNewForm(model);
 		model.addAttribute(WORK_ORDER, workOrder);
+		model.addAttribute("orderNumberGenerationAuto", true);
 		return EDIT;
 	}
 
@@ -167,6 +171,7 @@ public class WorkOrderController {
 			prepareNewForm(model);
 			return EDIT;
 		}
+		model.addAttribute("orderNumberGenerationAuto", true);
 		workOrderService.update(workOrder);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.workOrder.success", null, null));
 		return "redirect:/workorder/result/" + workOrder.getId() + "/view";
